@@ -1,51 +1,710 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Admin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — TrashTech</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #0d2b1f;
+      --moss: #1a4a32;
+      --leaf: #2d6a4f;
+      --sage: #52b788;
+      --mint: #b7e4c7;
+      --cream: #f8f4ef;
+      --sand: #e9e2d6;
+      --charcoal: #1c1c1c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: #f0ede8;
+      color: var(--charcoal);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 240px;
+      height: 100vh;
+      background: var(--forest);
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.5rem;
+      z-index: 50;
+    }
+
+    .sidebar-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--cream);
+      text-decoration: none;
+      margin-bottom: 0.4rem;
+    }
+
+    .sidebar-logo span { color: var(--sage); }
+
+    .sidebar-tagline {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(82,183,136,0.5);
+      margin-bottom: 2.5rem;
+    }
+
+    .sidebar-section {
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(183,228,199,0.3);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      padding-left: 0.75rem;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: rgba(183,228,199,0.65);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(82,183,136,0.1);
+      color: var(--mint);
+    }
+
+    .nav-item svg { flex-shrink: 0; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .sidebar-footer a {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: rgba(183,228,199,0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .sidebar-footer a:hover { color: rgba(183,228,199,0.7); }
+
+    /* Main content */
+    .main {
+      margin-left: 240px;
+      min-height: 100vh;
+    }
+
+    /* Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      padding: 1.25rem 2.5rem;
+      background: rgba(240,237,232,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(45,106,79,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--forest);
+      letter-spacing: -0.02em;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--leaf);
+      background: rgba(45,106,79,0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+      border: 1px solid rgba(45,106,79,0.2);
+    }
+
+    .dot-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sage);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Content */
+    .content {
+      padding: 2.5rem;
+    }
+
+    /* Summary row */
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(45,106,79,0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .summary-card {
+      background: #fff;
+      padding: 1.5rem 1.75rem;
+    }
+
+    .summary-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8a9e94;
+      margin-bottom: 0.6rem;
+    }
+
+    .summary-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem;
+      color: var(--forest);
+      line-height: 1;
+    }
+
+    .summary-sub {
+      font-size: 0.75rem;
+      color: #aab8b2;
+      margin-top: 0.4rem;
+    }
+
+    /* Section header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: var(--forest);
+      letter-spacing: -0.01em;
+    }
+
+    /* Filter tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 0.25rem;
+      background: var(--sand);
+      padding: 0.25rem;
+      border-radius: 4px;
+    }
+
+    .filter-tab {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.4rem 1rem;
+      border-radius: 3px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #7a8f85;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .filter-tab.active {
+      background: #fff;
+      color: var(--forest);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    /* Report cards */
+    .reports-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .report-card {
+      background: #fff;
+      border-radius: 0;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+      animation: slideIn 0.4s ease both;
+    }
+
+    .report-card:first-child { border-radius: 6px 6px 0 0; }
+    .report-card:last-child { border-radius: 0 0 6px 6px; }
+    .report-card:only-child { border-radius: 6px; }
+
+    .report-card:hover {
+      box-shadow: 0 2px 12px rgba(13,43,31,0.08);
+      z-index: 1;
+      position: relative;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-inner {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    /* Status stripe */
+    .status-stripe {
+      width: 3px;
+    }
+
+    .status-stripe.menunggu { background: #d4a843; }
+    .status-stripe.diproses { background: #4895ef; }
+    .status-stripe.selesai  { background: var(--sage); }
+
+    /* Photo */
+    .card-photo {
+      width: 100px;
+      min-height: 90px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .card-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.95);
+    }
+
+    .photo-placeholder {
+      width: 100%;
+      height: 100%;
+      min-height: 90px;
+      background: var(--sand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Card body */
+    .card-body {
+      padding: 1.25rem 1.5rem;
+      flex: 1;
+    }
+
+    .card-loc {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--forest);
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: #7a8f85;
+      line-height: 1.55;
+      font-weight: 300;
+    }
+
+    /* Status badge */
+    .card-status-col {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-left: 1px solid rgba(45,106,79,0.07);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .status-badge.menunggu {
+      background: rgba(212,168,67,0.1);
+      color: #b08800;
+      border: 1px solid rgba(212,168,67,0.3);
+    }
+
+    .status-badge.diproses {
+      background: rgba(72,149,239,0.1);
+      color: #1566c0;
+      border: 1px solid rgba(72,149,239,0.3);
+    }
+
+    .status-badge.selesai {
+      background: rgba(82,183,136,0.1);
+      color: var(--leaf);
+      border: 1px solid rgba(82,183,136,0.3);
+    }
+
+    /* Card actions */
+    .card-actions {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      justify-content: center;
+      border-left: 1px solid rgba(45,106,79,0.07);
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 0.45rem 1rem;
+      border-radius: 3px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-proses {
+      background: rgba(72,149,239,0.1);
+      color: #1566c0;
+      border: 1px solid rgba(72,149,239,0.25);
+    }
+
+    .btn-proses:hover {
+      background: #4895ef;
+      color: #fff;
+      border-color: #4895ef;
+    }
+
+    .btn-selesai {
+      background: rgba(82,183,136,0.1);
+      color: var(--leaf);
+      border: 1px solid rgba(82,183,136,0.25);
+    }
+
+    .btn-selesai:hover {
+      background: var(--sage);
+      color: #fff;
+      border-color: var(--sage);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 5rem 2rem;
+      background: #fff;
+      border-radius: 6px;
+    }
+
+    .empty-state svg {
+      margin: 0 auto 1rem;
+      opacity: 0.3;
+    }
+
+    .empty-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: var(--forest);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-desc {
+      font-size: 0.85rem;
+      color: #9aaa9f;
+    }
+
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #ece9e3 25%, #e3dfd8 50%, #ece9e3 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 3px;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar { width: 200px; }
+      .main { margin-left: 200px; }
+      .summary-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .content { padding: 1.5rem; }
+      .summary-row { grid-template-columns: repeat(2, 1fr); }
+      .card-inner { grid-template-columns: auto 1fr; }
+      .card-photo { display: none; }
+      .card-status-col { display: none; }
+      .card-actions { flex-direction: row; }
+    }
+  </style>
 </head>
-<body class="container mt-5">
+<body>
 
-<h3>Data Laporan</h3>
-<div id="data"></div>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a class="sidebar-logo" href="index.html">Trash<span>Tech</span></a>
+    <div class="sidebar-tagline">Admin Dashboard</div>
 
-<script>
-async function loadData() {
-  const res = await fetch("/reports");
-  const data = await res.json();
+    <div class="sidebar-section">Menu</div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Data Laporan
+      </a>
+    </nav>
 
-  let html = "";
+    <div class="sidebar-footer">
+      <a href="index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Kembali ke Beranda
+      </a>
+    </div>
+  </aside>
 
-  data.forEach(d => {
-    html += `
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5>${d.lokasi}</h5>
-          <p>${d.deskripsi}</p>
-          <img src="${d.foto_url}" width="200"/>
-          <p>Status: ${d.status}</p>
+  <!-- Main -->
+  <div class="main">
 
-          <button onclick="update(${d.id}, 'diproses')" class="btn btn-warning">Proses</button>
-          <button onclick="update(${d.id}, 'selesai')" class="btn btn-success">Selesai</button>
+    <div class="topbar">
+      <div class="topbar-title">Data Laporan</div>
+      <div class="topbar-right">
+        <span class="badge-live">
+          <span class="dot-pulse"></span>
+          Live
+        </span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Summary row -->
+      <div class="summary-row" id="summary-row">
+        <div class="summary-card">
+          <div class="summary-label">Total Laporan</div>
+          <div class="summary-num skeleton" style="height:2.2rem; width:60px;">&nbsp;</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Menunggu</div>
+          <div class="summary-num skeleton" style="height:2.2rem; width:40px;">&nbsp;</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Diproses</div>
+          <div class="summary-num skeleton" style="height:2.2rem; width:40px;">&nbsp;</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Selesai</div>
+          <div class="summary-num skeleton" style="height:2.2rem; width:40px;">&nbsp;</div>
         </div>
       </div>
-    `;
-  });
 
-  document.getElementById("data").innerHTML = html;
-}
+      <!-- Reports -->
+      <div class="section-header">
+        <div class="section-title">Semua Laporan</div>
+        <div class="filter-tabs" id="filter-tabs">
+          <button class="filter-tab active" data-filter="semua">Semua</button>
+          <button class="filter-tab" data-filter="menunggu">Menunggu</button>
+          <button class="filter-tab" data-filter="diproses">Diproses</button>
+          <button class="filter-tab" data-filter="selesai">Selesai</button>
+        </div>
+      </div>
 
-async function update(id, status) {
-  await fetch("/reports/" + id, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status })
-  });
+      <div id="data"></div>
 
-  loadData();
-}
+    </div>
+  </div>
 
-loadData();
-</script>
+  <script>
+    let allData = [];
+    let currentFilter = 'semua';
 
+    function getStatusClass(status) {
+      const s = (status || '').toLowerCase();
+      if (s === 'diproses') return 'diproses';
+      if (s === 'selesai') return 'selesai';
+      return 'menunggu';
+    }
+
+    function getStatusLabel(status) {
+      const s = (status || '').toLowerCase();
+      if (s === 'diproses') return 'Diproses';
+      if (s === 'selesai') return 'Selesai';
+      return 'Menunggu';
+    }
+
+    function renderSummary(data) {
+      const total = data.length;
+      const menunggu = data.filter(d => getStatusClass(d.status) === 'menunggu').length;
+      const diproses = data.filter(d => getStatusClass(d.status) === 'diproses').length;
+      const selesai = data.filter(d => getStatusClass(d.status) === 'selesai').length;
+
+      document.getElementById('summary-row').innerHTML = `
+        <div class="summary-card">
+          <div class="summary-label">Total Laporan</div>
+          <div class="summary-num">${total}</div>
+          <div class="summary-sub">Semua masukan</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Menunggu</div>
+          <div class="summary-num">${menunggu}</div>
+          <div class="summary-sub">Belum diproses</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Diproses</div>
+          <div class="summary-num">${diproses}</div>
+          <div class="summary-sub">Sedang ditangani</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Selesai</div>
+          <div class="summary-num">${selesai}</div>
+          <div class="summary-sub">Telah ditangani</div>
+        </div>
+      `;
+    }
+
+    function renderData(data) {
+      const filtered = currentFilter === 'semua'
+        ? data
+        : data.filter(d => getStatusClass(d.status) === currentFilter);
+
+      if (!filtered.length) {
+        document.getElementById("data").innerHTML = `
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2d6a4f" stroke-width="1.5"><path d="M3 3h18M3 9h18M3 15h18M3 21h18"/></svg>
+            <div class="empty-title">Tidak ada laporan</div>
+            <div class="empty-desc">Belum ada laporan dengan status ini.</div>
+          </div>
+        `;
+        return;
+      }
+
+      const html = filtered.map((d, i) => {
+        const sc = getStatusClass(d.status);
+        const sl = getStatusLabel(d.status);
+        const photoHTML = d.foto_url
+          ? `<img src="${d.foto_url}" alt="Foto laporan"/>`
+          : `<div class="photo-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b0bdb6" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`;
+
+        return `
+          <div class="report-card" style="animation-delay:${i * 0.04}s">
+            <div class="card-inner">
+              <div class="status-stripe ${sc}"></div>
+              <div class="card-photo">${photoHTML}</div>
+              <div class="card-body">
+                <div class="card-loc">${d.lokasi || 'Lokasi tidak diketahui'}</div>
+                <div class="card-desc">${d.deskripsi || 'Tidak ada deskripsi.'}</div>
+              </div>
+              <div class="card-status-col">
+                <span class="status-badge ${sc}">${sl}</span>
+              </div>
+              <div class="card-actions">
+                <button class="action-btn btn-proses" onclick="update(${d.id}, 'diproses')">Proses</button>
+                <button class="action-btn btn-selesai" onclick="update(${d.id}, 'selesai')">Selesai</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById("data").innerHTML = `<div class="reports-list">${html}</div>`;
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch("/reports");
+        allData = await res.json();
+        renderSummary(allData);
+        renderData(allData);
+      } catch (err) {
+        document.getElementById("data").innerHTML = `
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c94040" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <div class="empty-title">Gagal memuat data</div>
+            <div class="empty-desc">Pastikan server berjalan dan coba refresh halaman.</div>
+          </div>
+        `;
+      }
+    }
+
+    async function update(id, status) {
+      await fetch("/reports/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      });
+      loadData();
+    }
+
+    // Filter tabs
+    document.getElementById('filter-tabs').addEventListener('click', (e) => {
+      if (!e.target.classList.contains('filter-tab')) return;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      e.target.classList.add('active');
+      currentFilter = e.target.dataset.filter;
+      renderData(allData);
+    });
+
+    loadData();
+  </script>
 </body>
 </html>
