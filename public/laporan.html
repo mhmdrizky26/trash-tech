@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lapor Sampah</title>
+</head>
+<body class="container mt-5">
+
+<h3>Buat Laporan</h3>
+
+<form id="form">
+  <input class="form-control mb-2" name="lokasi" placeholder="Lokasi" required>
+  <textarea class="form-control mb-2" name="deskripsi" placeholder="Deskripsi"></textarea>
+  <input type="file" name="foto" class="form-control mb-2">
+  <button class="btn btn-success">Kirim</button>
+</form>
+
+<script>
+document.getElementById("form").onsubmit = async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+
+  await fetch("/reports", {
+    method: "POST",
+    body: formData
+  });
+
+  alert("Laporan terkirim!");
+};
+</script>
+
+</body>
+</html>

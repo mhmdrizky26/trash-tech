@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin</title>
+</head>
+<body class="container mt-5">
+
+<h3>Data Laporan</h3>
+<div id="data"></div>
+
+<script>
+async function loadData() {
+  const res = await fetch("/reports");
+  const data = await res.json();
+
+  let html = "";
+
+  data.forEach(d => {
+    html += `
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5>${d.lokasi}</h5>
+          <p>${d.deskripsi}</p>
+          <img src="${d.foto_url}" width="200"/>
+          <p>Status: ${d.status}</p>
+
+          <button onclick="update(${d.id}, 'diproses')" class="btn btn-warning">Proses</button>
+          <button onclick="update(${d.id}, 'selesai')" class="btn btn-success">Selesai</button>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById("data").innerHTML = html;
+}
+
+async function update(id, status) {
+  await fetch("/reports/" + id, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status })
+  });
+
+  loadData();
+}
+
+loadData();
+</script>
+
+</body>
+</html>
