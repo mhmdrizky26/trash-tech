@@ -330,19 +330,19 @@
 
   <div class="stats-bar">
     <div class="stat-item">
-      <div class="stat-num">247</div>
+      <div class="stat-num" id="stat-total">--</div>
       <div class="stat-label">Laporan Masuk</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num">189</div>
+      <div class="stat-num" id="stat-selesai">--</div>
       <div class="stat-label">Berhasil Ditangani</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num">32</div>
+      <div class="stat-num" id="stat-diproses">--</div>
       <div class="stat-label">Sedang Diproses</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num">96%</div>
+      <div class="stat-num" id="stat-rate">--%</div>
       <div class="stat-label">Tingkat Respons</div>
     </div>
   </div>
@@ -369,6 +369,28 @@
     <p>TrashTech &mdash; Sistem Laporan Sampah Digital</p>
     <p>Bersama Menjaga Kebersihan Lingkungan</p>
   </footer>
+
+  <script>
+    async function loadHomepageStats() {
+      try {
+        const res = await fetch('/reports/analytics');
+        const data = await res.json();
+        const summary = data.summary || {};
+
+        document.getElementById('stat-total').textContent = summary.total ?? 0;
+        document.getElementById('stat-selesai').textContent = summary.selesai ?? 0;
+        document.getElementById('stat-diproses').textContent = summary.diproses ?? 0;
+        document.getElementById('stat-rate').textContent = `${summary.responseRate ?? 0}%`;
+      } catch (err) {
+        document.getElementById('stat-total').textContent = 0;
+        document.getElementById('stat-selesai').textContent = 0;
+        document.getElementById('stat-diproses').textContent = 0;
+        document.getElementById('stat-rate').textContent = '0%';
+      }
+    }
+
+    loadHomepageStats();
+  </script>
 
 </body>
 </html>
