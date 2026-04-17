@@ -33,7 +33,9 @@ router.post("/", upload.single("foto"), async (req, res) => {
       "INSERT INTO reports (lokasi, deskripsi, foto_url) VALUES (?, ?, ?)",
       [lokasi, deskripsi, foto_url],
       (err) => {
-        if (err) throw err;
+        if (err) {
+          return res.status(500).json({ message: "Gagal menyimpan laporan", error: err.message });
+        }
         res.json({ message: "Laporan berhasil dikirim" });
       }
     );
@@ -46,7 +48,9 @@ router.post("/", upload.single("foto"), async (req, res) => {
 // ✅ GET ALL REPORTS
 router.get("/", (req, res) => {
   db.query("SELECT * FROM reports ORDER BY created_at DESC", (err, result) => {
-    if (err) throw err;
+    if (err) {
+      return res.status(500).json({ message: "Gagal mengambil laporan", error: err.message });
+    }
     res.json(result);
   });
 });
@@ -164,7 +168,9 @@ router.put("/:id", (req, res) => {
     "UPDATE reports SET status=? WHERE id=?",
     [status, req.params.id],
     (err) => {
-      if (err) throw err;
+      if (err) {
+        return res.status(500).json({ message: "Gagal memperbarui status", error: err.message });
+      }
       res.send("Status diperbarui");
     }
   );
